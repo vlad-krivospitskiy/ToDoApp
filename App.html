@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Todo App</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+        background-color: #749bc2;
+        justify-content: center;
+        align-items: center;
+      }
+
+      header {
+        display: flex;
+        justify-content: space-between;
+        background-color: #91c8e4;
+        padding: 10px;
+        position: fixed;
+        top: 0;
+        width: 100%;
+      }
+
+      header .logo {
+        font-size: 24px;
+        font-weight: bold;
+      }
+
+      nav {
+        display: flex;
+      }
+
+      nav a {
+        text-decoration: none;
+        color: #fff;
+        padding: 5px 10px;
+        margin: 0 5px;
+        border-radius: 5px;
+        background-color: #4682a9;
+      }
+
+      main {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-top: 70px;
+      }
+
+      .todo-app {
+        text-align: center;
+        margin-top: 20px;
+      }
+
+      .todo-columns {
+        display: flex;
+        justify-content: space-between;
+        width: 900px;
+      }
+
+      .todo-column {
+        flex: 1;
+        background-color: #f0f0f0;
+        border-radius: 5px;
+        padding: 10px;
+        margin: 0 5px;
+      }
+
+      .todos {
+        list-style: none;
+        padding: 0;
+      }
+
+      .todos li {
+        padding: 10px;
+        border: 1px solid #ddd;
+        margin-bottom: 5px;
+        position: relative;
+      }
+
+      .todos li::before {
+        content: attr(data-status);
+        display: inline-block;
+        padding: 5px 10px;
+        border-radius: 5px;
+        font-size: 12px;
+        font-weight: bold;
+        color: #fff;
+        background-color: #91c8e4;
+        margin-right: 5px;
+      }
+
+      footer {
+        background-color: #4682a9;
+        padding: 10px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+      }
+
+      .column-links a {
+        display: block;
+        margin-bottom: 5px;
+        text-decoration: none;
+        color: #fff;
+      }
+
+      .footer-logo {
+        font-size: 18px;
+        font-weight: bold;
+        color: #fff;
+      }
+
+      .todo-app input,
+      .todo-app select {
+        padding: 10px;
+        font-size: 16px;
+        margin-bottom: 10px;
+        border: none;
+        border-radius: 5px;
+        width: 300px;
+        background-color: #fff;
+      }
+
+      .todo-app select {
+        background-color: #f0f0f0;
+        color: #000;
+      }
+
+      .todo-app button {
+        padding: 10px 20px;
+        font-size: 16px;
+        background-color: #91c8e4;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+
+      .todo-app button:hover {
+        background-color: #4682a9;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="logo">Logo</div>
+      <nav>
+        <a href="#">Link 1</a>
+        <a href="#">Link 2</a>
+        <a href="#">Link 3</a>
+        <a href="#">Link 4</a>
+        <a href="#">Link 5</a>
+        <a href="#">Link 6</a>
+      </nav>
+    </header>
+
+    <main>
+      <div class="todo-app">
+        <input type="text" id="todoInput" placeholder="Введите задачу" />
+        <select id="statusSelect">
+          <option value="plan">План</option>
+          <option value="inProgress">В процессе</option>
+          <option value="done">Выполнено</option>
+        </select>
+        <button id="addButton">Добавить задачу</button>
+        <div class="todo-columns">
+          <div class="todo-column" id="todoPlan">
+            <h3>План</h3>
+            <ul class="todos"></ul>
+          </div>
+          <div class="todo-column" id="todoInProgress">
+            <h3>В процессе</h3>
+            <ul class="todos"></ul>
+          </div>
+          <div class="todo-column" id="todoDone">
+            <h3>Выполнено</h3>
+            <ul class="todos"></ul>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer>
+      <nav class="column-links">
+        <a href="#">Column Link 1</a>
+        <a href="#">Column Link 2</a>
+        <a href="#">Column Link 3</a>
+        <a href="#">Column Link 4</a>
+        <a href="#">Column Link 5</a>
+        <a href="#">Column Link 6</a>
+      </nav>
+      <div class="footer-logo">Logo</div>
+    </footer>
+
+    <script>
+      class App {
+        constructor() {
+          this.todoList = [];
+        }
+
+        addTodo(todo) {
+          this.todoList.push(todo);
+        }
+
+        getTodos() {
+          return this.todoList;
+        }
+      }
+
+      class ToDo extends App {
+        constructor() {
+          super();
+          this.todoInput = document.getElementById("todoInput");
+          this.statusSelect = document.getElementById("statusSelect");
+          this.todoPlanElem = document
+            .getElementById("todoPlan")
+            .querySelector(".todos");
+          this.todoInProgressElem = document
+            .getElementById("todoInProgress")
+            .querySelector(".todos");
+          this.todoDoneElem = document
+            .getElementById("todoDone")
+            .querySelector(".todos");
+          this.addButton = document.getElementById("addButton");
+          this.addButton.addEventListener(
+            "click",
+            this.addTodoHandler.bind(this)
+          );
+          this.updateTodoList();
+        }
+
+        addTodoHandler() {
+          const todoText = this.todoInput.value;
+          if (!todoText) return;
+
+          const status = this.statusSelect.value;
+          const statusMap = {
+            plan: "План",
+            inProgress: "В процессе",
+            done: "Выполнено",
+          };
+          const todoItem = { text: todoText, status: statusMap[status] };
+          this.todoInput.value = "";
+
+          this.addTodo(todoItem);
+          this.updateTodoList();
+        }
+
+        updateTodoList() {
+          this.todoPlanElem.innerHTML = "";
+          this.todoInProgressElem.innerHTML = "";
+          this.todoDoneElem.innerHTML = "";
+
+          this.getTodos().forEach((todoItem) => {
+            const listItem = document.createElement("li");
+            listItem.textContent = todoItem.text;
+            listItem.setAttribute("data-status", todoItem.status);
+
+            if (todoItem.status === "План") {
+              this.todoPlanElem.appendChild(listItem);
+            } else if (todoItem.status === "В процессе") {
+              this.todoInProgressElem.appendChild(listItem);
+            } else if (todoItem.status === "Выполнено") {
+              this.todoDoneElem.appendChild(listItem);
+            }
+          });
+        }
+      }
+
+      const todoApp = new ToDo();
+    </script>
+  </body>
+</html>
